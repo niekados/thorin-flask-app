@@ -1,112 +1,179 @@
-![CI logo](https://codeinstitute.s3.amazonaws.com/fullstack/ci_logo_small.png)
+# Lesson 1
 
-Welcome USER_NAME,
+## Install
 
-This is the Code Institute student template for Gitpod. We have preinstalled all of the tools you need to get started. It's perfectly ok to use this template as the basis for your project submissions.
+1. `pip3 install flask`
 
-You can safely delete this README.md file or change it for your own project. Please do read it at least once, though! It contains some important information about Gitpod and the extensions we use. Some of this information has been updated since the video content was created. The last update to this file was: **April 26, 2024**
+2. `touch run.py` - create python file.
+    - In Flask, the naming convention for our main file to run our application is usually `run.py` or `app.py`.
 
-## Gitpod Reminders
-
-To run a frontend (HTML, CSS, Javascript only) application in Gitpod, in the terminal, type:
-
-`python3 -m http.server`
-
-A blue button should appear to click: _Make Public_,
-
-Another blue button should appear to click: _Open Browser_.
-
-To run a backend Python file, type `python3 app.py` if your Python file is named `app.py`, of course.
-
-A blue button should appear to click: _Make Public_,
-
-Another blue button should appear to click: _Open Browser_.
-
-By Default, Gitpod gives you superuser security privileges. Therefore, you do not need to use the `sudo` (superuser do) command in the bash terminal in any of the lessons.
-
-To log into the Heroku toolbelt CLI:
-
-1. Log in to your Heroku account and go to *Account Settings* in the menu under your avatar.
-2. Scroll down to the *API Key* and click *Reveal*
-3. Copy the key
-4. In Gitpod, from the terminal, run `heroku_config`
-5. Paste in your API key when asked
-
-You can now use the `heroku` CLI program - try running `heroku apps` to confirm it works. This API key is unique and private to you, so do not share it. If you accidentally make it public, you can create a new one with _Regenerate API Key_.
-
-------
-
-## Release History
-
-We continually tweak and adjust this template to help give you the best experience. Here is the version history:
-
-**April 26 2024:** Update node version to 16
-
-**September 20 2023:** Update Python version to 3.9.17.
-
-**September 1 2021:** Remove `PGHOSTADDR` environment variable.
-
-**July 19 2021:** Remove `font_fix` script now that the terminal font issue is fixed.
-
-**July 2 2021:** Remove extensions that are not available in Open VSX.
-
-**June 30 2021:** Combined the P4 and P5 templates into one file, added the uptime script. See the FAQ at the end of this file.
-
-**June 10 2021:** Added: `font_fix` script and alias to fix the Terminal font issue
-
-**May 10 2021:** Added `heroku_config` script to allow Heroku API key to be stored as an environment variable.
-
-**April 7 2021:** Upgraded the template for VS Code instead of Theia.
-
-**October 21 2020:** Versions of the HTMLHint, Prettier, Bootstrap4 CDN and Auto Close extensions updated. The Python extension needs to stay the same version for now.
-
-**October 08 2020:** Additional large Gitpod files (`core.mongo*` and `core.python*`) are now hidden in the Explorer, and have been added to the `.gitignore` by default.
-
-**September 22 2020:** Gitpod occasionally creates large `core.Microsoft` files. These are now hidden in the Explorer. A `.gitignore` file has been created to make sure these files will not be committed, along with other common files.
-
-**April 16 2020:** The template now automatically installs MySQL instead of relying on the Gitpod MySQL image. The message about a Python linter not being installed has been dealt with, and the set-up files are now hidden in the Gitpod file explorer.
-
-**April 13 2020:** Added the _Prettier_ code beautifier extension instead of the code formatter built-in to Gitpod.
-
-**February 2020:** The initialisation files now _do not_ auto-delete. They will remain in your project. You can safely ignore them. They just make sure that your workspace is configured correctly each time you open it. It will also prevent the Gitpod configuration popup from appearing.
-
-**December 2019:** Added Eventyret's Bootstrap 4 extension. Type `!bscdn` in a HTML file to add the Bootstrap boilerplate. Check out the <a href="https://github.com/Eventyret/vscode-bcdn" target="_blank">README.md file at the official repo</a> for more options.
-
-------
-
-## FAQ about the uptime script
-
-**Why have you added this script?**
-
-It will help us to calculate how many running workspaces there are at any one time, which greatly helps us with cost and capacity planning. It will help us decide on the future direction of our cloud-based IDE strategy.
-
-**How will this affect me?**
-
-For everyday usage of Gitpod, it doesn’t have any effect at all. The script only captures the following data:
-
-- An ID that is randomly generated each time the workspace is started.
-- The current date and time
-- The workspace status of “started” or “running”, which is sent every 5 minutes.
-
-It is not possible for us or anyone else to trace the random ID back to an individual, and no personal data is being captured. It will not slow down the workspace or affect your work.
-
-**So….?**
-
-We want to tell you this so that we are being completely transparent about the data we collect and what we do with it.
-
-**Can I opt out?**
-
-Yes, you can. Since no personally identifiable information is being captured, we'd appreciate it if you let the script run; however if you are unhappy with the idea, simply run the following commands from the terminal window after creating the workspace, and this will remove the uptime script:
-
-```
-pkill uptime.sh
-rm .vscode/uptime.sh
+3. The first thing that we need to do is to import the Flask class.
+    ```python
+    from flask import Flask
+    ```
+4. Next, we need to create an instance of this class.
+    Again, in Flask, the convention is that our variable is called 'app'.
+    ```python
+    # Create instance of this class
+    app = Flask(__name__)
+    ```
+5. Then, we use the route decorator to tell Flask what URL should trigger the function that follows.
+    I will create a function called "index", which just returns the string, "Hello, World".
+```python
+@app.route("/")
+def index():
+    return "Hello, World"
 ```
 
-**Anything more?**
+6. 
 
-Yes! We'd strongly encourage you to look at the source code of the `uptime.sh` file so that you know what it's doing. As future software developers, it will be great practice to see how these shell scripts work.
 
----
+<span style="color:red;">
+<strong>One thing to take note of, is that we should never have `debug=True` in a production application, or when we submit our projects for assessment.
+This is very important, because having debug=True can allow arbitrary code to be run, and obviously this is a security flaw.
+You should only have debug=True while testing your application in development mode, but change it to debug=False before you submit your project.
+</strong>
+</span>
 
-Happy coding!
+## Summary 
+So let's go through this and understand what's happening.
+First, we're importing our Flask class.
+We're then creating an instance of this and storing it in a variable called 'app'.
+The first argument of the Flask class, is the name of the application's module - our package.
+Since we're just using a single module, we can use __name__ which is a built-in Python variable.
+Flask needs this so that it knows where to look for templates and static files.
+We're then using the app.route decorator.
+In Python, a decorator starts with the @ symbol, which is also called pie-notation.
+Effectively, a decorator is a way of wrapping functions.
+When we try to browse to the root directory, as indicated by the "/", then Flask triggers the index function underneath and returns the "Hello, World" text.
+So far, this isn't enough to get our application running, so we need to add some extra functionality to do that.
+We can "import os" from the standard Python library, and then we're going to reference this built-in variable and say that:
+if name is equal to "main" (both wrapped in double underscores), then we're going to run our app with the following arguments.
+The 'host' will be set to os.environ.get("IP"),
+and I will set a default of "0.0.0.0".
+We're using the os module from the standard library to get the 'IP' environment variable if it exists, but set a default value if it's not found.
+It will be the same with 'PORT', but this time, we're casting it as an integer, and I will set that default to "5000", which is a common port used by Flask.
+We also need to specify "debug=True", because that will allow us to debug our code much easier during the development stage.
+The word 'main' wrapped in double-underscores (__main__) is the name of the default module in Python.
+
+# Lesson 2
+
+## render_template
+
+`from flask import Flas, render_template`
+
+and we can render html template
+```python
+@app.route("/")
+def index():
+    return render_template("index.html")
+```
+
+templates has to be stored in `templates` folder
+
+# Lesson 3
+
+index and about is also called a view 
+
+```python
+# @app.route (python decorator) def index or about etc. is also called a view
+
+@app.route("/") #"/" stands for root directory, where it can find app file
+def index():
+    return render_template("index.html")
+
+
+@app.route("/about")
+def about():
+    return render_template("about.html")
+```
+
+In order for our navigation links to work, we need use the Jinja templating method of url_for in order to call the appropriate functions.
+The format for that is: double curly brackets (opening and closing), url_for, and then the name of our function goes inside of single quotes wrapped inside of parentheses.
+
+```html
+<ul>
+    <li>
+        <a href="{{ url_for('index') }}">  <!-- url_for( has to coresspond the views names ) -->
+    </li>  
+    <li>
+        <a href="{{ url_for('about') }}">  <!-- url_for( has to coresspond the views names ) -->
+    </li> 
+</ul>  
+```
+
+When Flask sees these two opening curly brackets, it knows that what's actually inside of there, will be some code.
+What we're doing is calling the url_for() function that looks up the view called 'index()' or the view called 'about()', and then injects some text, which is the actual root.
+
+The names have to correspond to the views, so for now, that means our index() view and our about() view.
+
+# Lesson 3
+
+## Template inheritance
+
+One of the beauties of using a framework like Flask or Django, is that they allow us to
+reuse as much code as possible.
+Let's create a base template that can act as our primary page.
+I will duplicate the `index.html` file, and then rename the new copy to `base.html`.
+
+```html
+<!-- base.html -->
+<body>
+    <nav>
+        <ul>
+            <!-- url_for( has to coresspond the views names ) -->
+            <li><a href="{{ url_for('index') }}">Home</a></li> 
+            <li><a href="{{ url_for('about') }}">About</a></li>
+            <li><a href="{{ url_for('contact') }}">Contact</a></li>
+        </ul>
+    </nav>
+<!-- we choose the name of the block, in this case its called "content" -->
+    {% block content %}
+    {% endblock %}
+</body>
+```
+
+
+In its place, I'll write the words {% block content %} wrapped inside of curly brackets
+and percentage symbols.
+On the next line, I'll do the same, but put the word 'endblock'.
+What we're doing here is defining a block, or an area, that we can inject content into
+from other pages.
+The difference between the percent sign and the double curly bracket notation that we've
+used before, is that the double curly brackets contain an 'expression', which is outputting
+something either onto the screen, or in this case, into our href.
+The curly bracket and percentage are for statements that control the flow of our template, such
+as a for-loop, if-statement, or this block element.
+
+
+Now that we have that done, let's go back into the index.html file.
+I'm going to delete all of the code that I put above my `<h1>`, and all of the code that
+I put below it.
+We're then going to put in its place: {% extends "base.html" %} making sure 'base.html' is
+inside of quotes, but the entire statement is wrapped in curly brackets and percentage
+symbols.
+
+```html
+<!-- index.html -->
+{% extends "base.html" %}
+<!-- we choose the name of the block, in this case its called "content" -->
+{% block content %} 
+    <h1>Home Page</h1>
+{% endblock %}
+
+```
+
+### summary
+Essentially, when our `index.html` file loads, Flask inherits everything from the base template.
+It then looks for a block element (which we called 'content') and injects that content
+into it.
+The word 'content' is just a word that we chose, but we could have called the block
+anything, not just 'content'.
+In fact, if we have multiple blocks on a page, that's exactly what we would do.
+After saving the file, you can see I have a yellow squiggly line at the beginning of
+the file, as well as a yellow exclamation mark on the file itself.
+If I hover over this, you can see that the warning is: "Doctype must be declared first."
+We don't need to worry about this warning, since the <!DOCTYPE> is actually being extended
+from our base.html file, so we don't need to add it again.
+When I refresh and go back to my Home Page, you can see that it displays just the same
+as it was before.
