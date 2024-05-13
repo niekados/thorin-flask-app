@@ -5,11 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Link to vendor bootstrap css  -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}" type="text/css">
 
     <!-- Link to bootstrap theme css -->
     <!-- url_for takes two arguments: directory to look for file- "static" and file name or path to file name - 'filename' -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/clean-blog.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/clean-blog.min.css') }} " type="text/css">
+
+    <!-- My style sheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" type="text/css">
     <title>Hello Flask</title>
 </head>
 <body>
@@ -17,7 +20,7 @@
      <!-- Navigation -->
   <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
     <div class="container">
-      <a class="navbar-brand" href="{{ url_for('index') }}">Start Bootstrap</a>
+      <a class="navbar-brand" href="{{ url_for('index') }}">Thorin &amp; Company</a>
       <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
         Menu
         <i class="fas fa-bars"></i>
@@ -42,14 +45,14 @@
   </nav>
 
   <!-- Page Header -->
-  <header class="masthead" style="background-image: url('{{ url_for('static', filename='img/home-bg.jpg') }}')">
+  <header class="masthead" style="background-image: url('https://images.beastsofwar.com/2022/09/Thorin-Co.jpg')">
     <div class="overlay"></div>
     <div class="container">
       <div class="row">
         <div class="col-lg-8 col-md-10 mx-auto">
           <div class="site-heading">
-            <h1>Clean Blog</h1>
-            <span class="subheading">A Blog Theme by Start Bootstrap</span>
+            <h1>Thorin &amp; Company</h1>
+            <span class="subheading">Thorin and his company of dwarves</span>
           </div>
         </div>
       </div>
@@ -95,7 +98,7 @@
               </a>
             </li>
           </ul>
-          <p class="copyright text-muted">Copyright &copy; Your Website 2020</p>
+          <p class="copyright text-muted">Copyright &copy; Your Website <span id="copyright"></span></p>
         </div>
       </div>
     </div>
@@ -108,6 +111,11 @@
   <!-- Custom scripts for this template -->
   <script src="{{ url_for('static', filename='js/clean-blog.min.js') }}"></script>
 
+  <script>
+    // capture current year and inject in to copyright span in footer
+    $("#copyright").text(new Date().getFullYear());
+
+  </script>
 
 </body>
 </html>
