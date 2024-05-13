@@ -177,3 +177,35 @@ We don't need to worry about this warning, since the <!DOCTYPE> is actually bein
 from our base.html file, so we don't need to add it again.
 When I refresh and go back to my Home Page, you can see that it displays just the same
 as it was before.
+
+# Lesson 4
+
+I'm going to use the command `mkdir static`, which stands for 'make directory' and call
+it `static`.
+Static is often used to refer to files that don't change, such as JavaScript files, image
+files, and our CSS files.
+
+By now, you are probably used to calling this 'Assets' on your front-end projects.
+**You will use static files an awful lot more when we start looking at Django.**
+Now that we've created our static directory, let's `CD` into it, which stands for 'change
+directory'.
+
+Next, we will use the `wget` command and paste the link that we copied from the Start Bootstrap
+site.
+That will download the source files for us, and when I type `LS` to list the files, you
+can see that I have a zip file now called 'gh-pages'.
+To unzip that file, we can use the unzip command: `unzip gh-pages.zip`.
+
+
+## CSS link in base.html
+
+We need to add a link in the head to reference one of our CSS files.
+The standard shortcut for this is `link:css` and then hit the tab key.
+In the link href, I will do the same thing we did in the previous videos (and below),
+by using the 'url_for' function.
+This time, however, `url_for` is going to take two arguments.
+The first argument is `static` wrapped inside of single-quotes, so that url_for knows to
+look in the static directory.
+To add a second argument, separate them with a comma, and now we'll target a specific file.
+`Filename='css/clean-blog.min.css'`, making sure that the actual path to our file is wrapped
+in single-quotes.
