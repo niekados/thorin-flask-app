@@ -417,3 +417,62 @@ element.
 
 <h2>{{ page_title }}</h2>
 ```
+
+# Lesson 8
+
+We can now go back to our about.html file and remove the 'company' expression that we
+added on the last video.
+
+Then, scroll down and remove the second featurette that was added for Fili and Kili.
+Delete the entire thing, including the closing `</div> `tag.
+Now, above the featurette that we've added for Thorin, but below the basic information
+paragraph about the company, I will add in a for-loop.
+`{% for member in company %}` As a reminder, '`member`' could've been any
+word I chose, and company is the list we created in the Python file.
+Let's find the closing `</div>` for this featurette, and then add the required `{% endfor %}`.
+Essentially, every time this loop is evaluated, the HTML that's within the for-loop, is going
+to be injected into our template.
+
+```html
+{% for member in company %}
+
+    <div class="row featurette">
+        <div class="col-md-7">
+            <h3>{{ member.name }}</h3>
+            <p>{{ member.description }}</p>
+        </div>
+        <div class="col-md-5">
+            <img src="{{ member.image_source }}" alt="" class="featurette-image image-responsive">
+        </div>
+    </div>
+
+    <hr class="featurette-divider">
+
+{% endfor %}
+```
+
+# Lesson 9
+
+As we said , it would be nice if we could reverse the order of the images and
+text for each subsequent row, just as we did in our initial setup.
+We can actually do this quite easily, because when we create a for-loop using the Jinja
+templating language, it also creates an object for us called '`loop`'.
+That '`loop`' object has a property which is '`.index`'.
+This shows us exactly which iteration of the loop we're on.
+If I just put it in there as an expression and reload the page, you can see that the
+first iteration, so number 1, is Thorin, and number 2 is Kili and Fili, and so on and so
+forth, until the very end of the loop, which is the number 13 for Gandalf.
+
+We can actually move this `loop.index` and put it into our `member.name <h3> `tags.
+I will just add a 'dot' after the index number, to separate it from the member's name.
+This now gives us a nice numbered list of all the members of Thorin's company.
+
+But we can do more than this.
+We can actually check this value, to see where we are in the for-loop itself.
+What we are going to do, is put an if-statement.
+Just like with for-loops, if-statements in our templates go between curly brackets and
+`%` notation, because they are logic.
+Immediately after the opening `.featurette` row, let's add: `{% if loop.index % 2 != 0 %}`. 
+Then, I will add the `{% endif %}` line before
+the closing `</div>` tag.
+This is to let the Jinja templating language know where to stop the if-statement.
