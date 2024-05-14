@@ -209,3 +209,211 @@ look in the static directory.
 To add a second argument, separate them with a comma, and now we'll target a specific file.
 `Filename='css/clean-blog.min.css'`, making sure that the actual path to our file is wrapped
 in single-quotes.
+
+# Lesson 5
+
+One of the greatest benefits of using frameworks, is the fact that we can actually
+get server-side code to provide the frontend with data.
+That's exactly what we're going to do in this video.
+In run.py file.
+In the return statement from my 'about' view, I'm going to add in an additional argument 'page_title'.
+You can call this anything you want.
+The value for my variable will simply be a string with the text 'About', so page_title="About"
+wrapped inside of quotes to make it a string.
+```python
+@app.route("/about")
+def about():
+    return render_template("about.html", page_title="About")
+```
+
+To use this new variable, let's go to the `about.html` file, and remove the text between
+the `<h2>` tags at the top.
+I will replace that text with: `{{ page_title }}`
+Remember, double curly brackets is an expression that's going to display something on the page.
+In this case, the expression being passed through into my HTML file from python, will
+be the '`page_title`' that we've just created for each view.
+
+```html
+{% extends "base.html" %}
+{% block content %}
+<h2>{{ page_title }}</h2>
+```
+
+# Lesson 6
+
+I'm going to go back to the `run.py` file, and will add in
+an additional argument to our '`about`' function.
+This new example variable will have the name of: `list_of_numbers`, and I will set that list
+to equal to `[1, 2, 3]`.
+Notice this isn't a "string" this time, but a standard Python list.
+
+
+```python
+@app.route("/about") # This is the route
+def about():    # This is the view
+    return render_template("about.html", page_title="About", list_of_numbers=[1, 2, 3])
+```
+
+ I will just switch over to the About page.
+ `{{ list_of_numbers }}` I will save the file, and go back to the preview
+We can now see that our list is displaying in the square brackets.
+However, since this is a list, one of the beauties of frameworks is being able to iterate
+over lists using a for-loop.
+
+```html
+{% extends "base.html" %}
+{% block content %}
+
+{{ list_of_numbers }}
+```
+*then it's replaced with:
+
+To do that, we use the `{%` notation, because if you remember, that's for statements, not
+for expressions.
+This is called 'logic control'.
+I will write a standard template for-loop: `{% for number in list_of_numbers %}`.
+We always need to make sure to stop our for-loop by using the 'endfor' statement: `{% endfor %}`. 
+That way the Jinja templating language knows
+where the for-loop stops, and doesn't throw any unwanted errors.
+Inside of the for-loop, I'd like to generate a `<p>`aragraph tag for each iteration.
+To do this, within a `<p>`aragraph tag, let's add our new '`number`' variable into an expression
+using the two curly brackets method.
+By the way, the word '`number`' can be called anything, I'm just using the name of '`number`'
+since we're iterating over a list of multiple numbers.
+For example, if I had a list of countries, I could write something like 
+`{% for country in countries %}`. This will generate a new variable called '`country`'
+and iterate through a python list called '`countries`' plural.
+Please note, it's bad practice and can cause errors if you use the same name for the variable
+and the list itself, so don't write `{% for countries in countries %}`.
+We now have a simple for-loop.
+What it's doing, is iterating through the `list_of_numbers` from python, and then displaying
+each '`number`' in a `<p>`aragraph tag on the screen.
+Our for-loop has created three sets of `<p>`aragraph tags, and injected the value from our `list_of_numbers`,
+into each one respectively.
+
+```html
+{% extends "base.html" %}
+{% block content %}
+
+{% for number in list_of_numbers %}
+    <p>{{ number }}</p>
+{% endfor %}
+
+<h2>{{ page_title }}</h2>
+```
+
+# Lesson 7
+
+It would be good if we could load all of this information from a file, and then display
+it to the screen.
+I will start by creating a new directory called '`data`'.
+Within this folder, I will create a file called '`company.json`'.
+This file is going to contain an array of objects.
+Square brackets for the array, then curly brackets for our first object.
+This object will have three keys.
+`"Name"`, which I will set to Thorin Oakenshield.
+`"Description"`, which will contain a brief biography about him.
+And then `"image_source"`, which will contain a link to the image.
+Since we already have the biography details, I will just grab that from my '`About`' page.
+
+```json
+[
+    {
+        "name": "Thorin Oakenshield",
+        "description": "",
+        "image_source": ""
+    }
+]
+```
+
+A couple of things that I should mention here: First, in order for it to be valid JSON data,
+we cannot have any carriage returns or new lines - the entire value must be on a single
+line.
+Using the built-in formatter will not work unfortunately.
+I find it easier to start from the bottom, and work my way up, bringing each of the lower
+lines up one at a time.
+Just click and drag the mouse from the beginning of the line, and release at the end of the
+line above it, then hit the 'space' key.
+I'll continue doing this for each of the lines, until I have everything on a single line.
+The next item I want to point out, is that we need to remove any double quotes, and replace
+them with single quotes.
+As you can see here, the word "Oakenshield" is wrapped in double quotes, so I will just
+change that to single quotes.
+If we have double quotes, then it assumes we're finishing our string, and ignores the
+rest.
+
+```json
+[
+    {
+        "name": "Thorin Oakenshield",
+        // description is one single line, without any breaks
+        "description": "Thorin II was born in TA 2746 to the Dwarf prince Thráin II in the city of the Lonely Mountain. Early in his youth, Thorin and the other Dwarves of the Lonely Mountain were forced to flee by the dragon Smaug, in TA 2770. While in exile, he quickly grew into a capable warrior. This was demonstrated at the Battle of Azanulbizar, near Moria, in TA 2799. He fought with one of the Dwarven armies beneath Moria's East-gate, and at some point in the battle, his shield broke, and, using an oaken tree branch found on the ground as a shield, he gained the epithet 'Oakenshield', which remained with him even in death.",
+        "image_source": "https://static.wikia.nocookie.net/lotr/images/e/ec/1400193_695248260488487_320403599_o.jpg"
+    }
+]
+```
+Next, go back to the run.py file, and now we want Python to import the data.
+To do that, we first need to import the JSON library, because we're going to be passing
+the data that's coming in as JSON.
+It's as simple as typing: import json.
+
+```python
+import os
+# Import json 
+import json
+# Import Flask class
+from flask import Flask, render_template
+```
+
+Then, within my '`about`' view, I will initialize an empty array or list called '`data`'.
+We need to have Python open the JSON file in order to read it.
+This is called a '`with`' block.
+with `open("data/company.json", "r")` as json_data: Python is opening the JSON file as "read-only",
+and assigning the contents of the file to a new variable we've created called j`son_data`.
+We need to set our empty '`data`' list to equal the parsed JSON data that we've sent through.
+`data = json.load(json_data)` We no longer need this example `list_of_numbers`,
+so I will remove that. Finally, I will pass that list into my return statement, and call it '`company`'.
+`company=data` This is assigning a new variable called '`company`'
+that will be sent through to the HTML template, which is equal to the list of data it's loading
+from the JSON file.
+
+```python
+@app.route("/about") # This is the route
+def about():    # This is the view
+    data = []
+    with open("data/company.json", "r") as json_data:
+        data = json.load(json_data)
+    return render_template("about.html", page_title="About", company=data)
+```
+
+Let's head over to the About file, and first test to see if everything is being passed
+through fine.
+We no longer need the existing for-loop, but instead, I just want to view the entire contents
+from my new '`company`' variable that's being passed through from Python.
+Save those changes, then go to the preview and reload the page.
+As you can see, we have an array, and we have our JSON data within the array.
+You can see my key-value pairs: `name, description, and image_source`.
+Since this an array, I can refer to it using standard Python notation.
+
+```html
+{% extends "base.html" %}
+{% block content %}
+
+{{ company }}
+
+<h2>{{ page_title }}</h2>
+```
+
+I will add `[0]` to retrieve the first element out of the array (which is actually currently
+the only one we have in our JSON file).
+Next, I will add `["name"]` wrapped inside of a string, to get the name key from that first
+element.
+
+```html
+{% extends "base.html" %}
+{% block content %}
+
+{{ company[0]["name"] }}
+
+<h2>{{ page_title }}</h2>
+```
