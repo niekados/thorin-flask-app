@@ -785,3 +785,156 @@ def contact():
 
     request.form["key"] # = Exception
 ```
+
+# Lesson 12
+
+## Form submit feedback
+
+Now that we have information coming from our form, we can do stuff with it on the backend.
+What we want to do next, is display some feedback to the user.
+To do that, we are going to import a function from Flask called '`flash`'.
+
+```python
+from flask import Flask, render_template, request, flash
+```
+
+Sometimes we want to display a non-permanent message to the user, something that only stays
+on screen until we refresh the page, or go to a different one.
+These are called '`flashed messages`' in Flask.
+We want to display a flashed message when our visitor submits the contact form.
+To use flashed messages, we need to create a secret key, because Flask cryptographically
+signs all of the messages for security purposes.
+This might sound complicated, but really, all we need to do is provide a secret key
+that Flask can use to sign the messages.
+Generally, in production mode, we would keep the secret key private, so let's take a look
+at how to do that.
+
+
+First, I need a new Terminal opened.
+
+The first thing we need to do is create a new file called "`.gitignore`".
+Any file or folder that we add to this, will be ignored by GitHub, so we don't accidentally
+commit files that contain sensitive data.
+I will type: '`touch .gitignore`'.
+Next, we want to create a file called: "`env.py`", so let's type: '`touch env.py`'.
+This is where were will hide any sensitive data or environment variables that shouldn't
+be pushed to GitHub for example.
+Within the `env.py` file, we will import the `os` library from Python.
+We can now use the operating system method called '`environ`', short for environment variable
+as an example.
+We want to set a hidden variable, so let's type: `os.environ.setdefault()`.
+This will take two aruments.
+The first is our variable name that will be used to grab the confidential data, which
+I shall call "`SECRET_KEY`".
+The second is the key itself, whether it's an API key for example, or confidential database
+information which we'll see later.
+We need to separate these with a comma, and for now, I will assign my `SECRET_KEY` the value
+of: '`secret_flash_key`'.
+You can make this secret key anything you'd like, as long as it's hidden and is a string.
+
+```python
+#env.py
+import os
+os.environ.setdefault("SECRET_KEY", "secret_flash_key")
+```
+
+Next, we'll go to our `.gitignore` file.
+We need to tell GitHub to ignore the '`env.py`' file when we make any commits to the repository,
+so I will type '`env.py`' and save it.
+
+Now we can go back to our `run.py` file, and below our imports at the top, we just need
+to import one more library, called '`env`'.
+But, we only want to import `env`, if the system can find an `env.py` file.
+`if os.path.exists("env.py"): import env`
+
+```python
+import os
+# Import json 
+import json
+# Import Flask class
+from flask import Flask, render_template, request, flash
+# Import env
+if os.path.exists("env.py"):
+    import env
+```
+
+Once we save that, a new directory called '`pycache`' is created.
+We don't need to bother pushing that to GitHub either, so let's go back into our `.gitignore`
+file and type: `__pycache__/`.
+The '`/`' at the end identifies it as a directory, and so will therefore ignore everything within
+that folder as well.
+
+We now want to grab the hidden variable, which we've called `SECRET_KEY`.
+To use it, after we instantiate our app, we need to write: `app.secret_key = os.environ.get("SECRET_KEY")`.
+
+```python
+# To use the secret key after we instantiate the app
+app.secret_key = os.environ.get("SECRET_KEY")
+```
+
+Below, within our contact view, instead of the `print` statements, I'm going to call the
+`Flash()` function.
+`flash("Thanks {}, we have received your message!".format(request.form.get("name")))`.
+Once I save that, you can see a `red error `underneath `.get()`, so if I hover over that,
+it says `"Line Too Long"`.
+This is from an extension I'm using, and essentially says that lines should not be greater than
+79 characters long in order to be `PEP8 compliant`.
+You can see in the bottom of my IDE, it tells me that my cursor is currently on line 39,
+at the 92nd character for that line.
+<span style="color: red;">There are a few ways to fix this 'line too long' error for PEP8 compliance, but the easiest
+is to just hit enter after any opening-parentheses symbol.</span>
+That will ensure that it's at the correct tab location on the next line as well.
+
+```python
+@app.route("/contact", methods=["GET", "POST"])
+def contact():
+    if request.method == "POST":
+        flash("Thanks {}, we have received your message!".format(
+            request.form.get("name")))
+    return render_template("contact.html", page_title="Contact")
+```
+
+All we need to do now is update our contact template, so that it can retrieve the flashed
+messages.
+To do that, we are simply going to create a `{% with %}` block, similar to if/else statements
+or for-loops.
+Above the form, just inside of the first column, I will type: `{% with messages = get_flashed_messages() %}`. 
+`get_flashed_messages()` will return any of
+the messages that we've created using the `Flash()` function on the backend, and store
+that in a variable called messages.
+We need to close our `{% endwith %}` as well.
+Next, we are going to check if there are any messages to retrieve.
+`{% if messages %}` Let's also just close our `{% endif %}` here
+as well. If we have successfully returned any messages from our `get_flashed_messages()` function,
+then we are going to create some HTML.
+I want to display each message within an unordered list, so I can build that using a class name of 'flashes' that we can style later if we wanted to.
+Inside of our `<ul>`, we want to iterate through each of the messages, because it's possible
+for us to receive more than one from the backend on a single page.
+`{% for message in messages %}`. Don't forget to close that for-loop using:
+`{% endfor %}`. Finally, for each message, we will insert
+a line item: `<li>{{ message }}</li>`.
+
+When we reload our live preview, and resubmit the form, you can see here now, our flash
+message is displayed as a bullet-point list item: "Thanks Tim Nelson, we have received
+your message!"  [ its part of HTML and not a pop up alert style message ]
+
+```html
+<div class="row">
+    <div class="col-lg-8 col-md-10 mx-auto">
+
+        <!-- get_flashed_messages() will return any of messages we created using flash() function -->
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <ul class="flashes">
+                    {% for message in messages %}
+                        <li>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+
+        <p>Want to get in touch? Fill out the form below to send me a message and I will get back to you as soon as
+            possible!</p>
+        <form method="POST" name="sentMessage" id="contactForm" novalidate>
+```
+

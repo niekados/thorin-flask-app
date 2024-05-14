@@ -2,11 +2,17 @@ import os
 # Import json 
 import json
 # Import Flask class
-from flask import Flask, render_template
+from flask import Flask, render_template, request, flash
+# Import env
+if os.path.exists("env.py"):
+    import env
 
 
 # Create instance of this class
 app = Flask(__name__)
+
+# To use the secret key after we instantiate the app
+app.secret_key = os.environ.get("SECRET_KEY")
 
 # @app.route (python decorator) def index or about etc. is also called a view
 
@@ -37,6 +43,9 @@ def about_member(member_name):
 
 @app.route("/contact", methods=["GET", "POST"])
 def contact():
+    if request.method == "POST":
+        flash("Thanks {}, we have received your message!".format(
+            request.form.get("name"))) #It takes the 'name' key from our form, then using the .format() method, it injects that name into this particular flash message.
     return render_template("contact.html", page_title="Contact")
 
 
