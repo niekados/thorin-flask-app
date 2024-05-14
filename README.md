@@ -671,3 +671,117 @@ def about_member(member_name):
                 member = obj
     return render_template("member.html", member=member)
 ```
+
+# Lesson 11
+
+## Contact form
+
+We are going to use an HTTP method.
+Within our `form` element, we need to add `method="POST"`.
+Remember that we've looked at HTTP methods before.
+The `GET` method is used for retrieving data from the server, whereas the `POST` method is
+used for sending data to the server.
+What we also need to do, is give each of our `<input> `elements a `name` attritube.
+It's usually best to have the `name` match the `id`, so within the `<input>` field for someone's
+'`Name`', I will add: `name="name"`, since the `id="name"` as well.
+
+When I click on 'Send' now, I get an error: "Method Not Allowed".
+You can also see that it's a 405 Method Not Allowed error on the page tab as well, so
+this is an error from our server.
+If I go back and have a look inside of the Terminal, you can see that I have a red POST
+error, with a response of 405 from the server.
+The reason this is happening, is because by default, all of Flask's views will handle
+a `GET` request.
+If we need to start handling anything outside of that, such as `POST`, or the other methods,
+`DELETE` or `PUT`, then we need to explicitly state that our route can accept those methods.
+
+Within the `run.py` file, we need to go to our '`contact`' route, and we will add in another
+argument.
+After the URL path of '`/contact`', I will add a comma, followed by: `methods=["GET", "POST"]`.
+Even if we only have a single method for `POST`, the list variable still needs to be called
+'`methods`'.
+
+```python
+@app.route("/contact", methods=["GET", "POST"])
+def contact():
+    return render_template("contact.html", page_title="Contact")
+```
+
+Now we are no longer getting an error 405, but again, we also don't get anything back.
+So how exactly do we know that it's actually working?
+Well, one of the ways is by having a look at the debugger in the Terminal.
+You'll notice my previous request of posting the contact form resulted in a 405 error,
+which was that the method was not allowed.
+This time when we did it, we got a 200 response code, and as we remember before, the 200 response
+code means "that's okay, everything worked fine".
+
+```terminal
+<!-- Before in terminal -->
+[14/May/2024 20:09:52] "POST /contact HTTP/1.1" 405 -
+<!-- Now in terminal -->
+[14/May/2024 20:18:57] "POST /contact HTTP/1.1" 200 -
+```
+
+We can actually do something with that data now.
+The first thing we need to do, is import the '`request`' library from Flask.
+Request is going to handle things like finding out what method we used, and it will also
+contain our form object when we've posted it.
+Within our contact view, we'll just add in an '`if-statement`', and we are going to use
+the '`method`' of the '`request`' object: `if request.method == "POST":`
+
+```python
+# Top of run.py file
+from flask import Flask, render_template, request
+# Contact view
+@app.route("/contact", methods=["GET", "POST"])
+def contact():
+    if request.method == "POST":
+        print(request.form.get("name"))
+    return render_template("contact.html", page_title="Contact")
+```
+
+The request object has a lot more things attached to it as well.
+When we submit a form, it actually has the form-object attached.
+Remember that we gave each of our form elements the name attribute?
+Let's see what happens if we print "`request.form`".
+Once again, save that, go back to our contact form, and I will add more test data into the
+form, and click on send.
+In the terminal debugger, you can see that we have this thing called an '`ImmutableMultiDictionary`'.
+But there it is, we have the data that came through from our form.
+My name, email address, phone number, and a message, all being passed through our `POST`
+method with a status code of `200`, so it worked!
+Because this is a dictionary, we can actually use a standard Python method of accessing
+the keys for that dictionary.
+If I `print(request.form.get("name"))`, this will allow us to get the '`name`' value from
+our form.
+Back within the debugger, it's printed out just the value of the name input,
+using `request.form.get('name')`.
+
+
+I want to quickly show you another way to do the same thing.
+Instead of `request.form.get`, I will make a copy of this and use: `request.form['email']`
+but this time inside of square brackets, and not using the `.get() method`.
+I'll resubmit the form once again, and then see what gets returned into the debugger now.
+By using `.get()`, if the form doesn't actually have a key of '`name`' or `'email`' for example,
+then it would display '`None`' by default.
+However, by just using `request.form[]`, if there isn't a '`name`' or '`email`' key on our
+form, instead of returning '`None`', it would throw an exception.
+That's how we can access a form's data from the backend of our site.
+
+```python
+@app.route("/contact", methods=["GET", "POST"])
+def contact():
+    if request.method == "POST":
+        # Original get method
+        print(request.form.get("name"))
+        # Square bracket get request
+        print(request.form["email"])
+    return render_template("contact.html", page_title="Contact")
+```
+
+```python
+# If there isn't such key in doctionary we would get
+    request.form.get("key")  # = None
+
+    request.form["key"] # = Exception
+```
