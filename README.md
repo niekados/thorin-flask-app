@@ -476,3 +476,198 @@ Immediately after the opening `.featurette` row, let's add: `{% if loop.index % 
 Then, I will add the `{% endif %}` line before
 the closing `</div>` tag.
 This is to let the Jinja templating language know where to stop the if-statement.
+
+
+End result of adjusting the code to inject data from `data.json`
+
+```html
+{% for member in company %}
+
+    <div class="row featurette">
+
+        {% if loop.index % 2 != 0 %}
+
+            <div class="col-md-7">
+                <h3>{{ loop.index }}. {{ member.name }}</h3>
+                <p>{{ member.description }}</p>
+            </div>
+            <div class="col-md-5">
+                <img src="{{ member.image_source }}" alt="" class="featurette-image image-responsive">
+            </div>
+
+        {% else %}
+
+        <div class="col-md-5">
+            <img src="{{ member.image_source }}" alt="" class="featurette-image image-responsive">
+        </div>
+        <div class="col-md-7">
+            <h3>{{ loop.index }}. {{ member.name }}</h3>
+            <p>{{ member.description }}</p>
+        </div>
+
+        {% endif %}
+    </div>
+    
+    {% if loop.index != loop.length %}
+
+        <hr class="featurette-divider">
+
+    {% endif %}
+
+{% endfor %}
+```
+
+# Lesson 10
+
+But what we would like to be able to do, is to click on the title, or the name of one
+of the characters, and have it bring us to a page that displays more information about
+them. Doing this also allows us to demonstrate some of the advanced routing features of Flask.
+
+Let's start by going to our `about.html` file, and add a link into our `<h3>` tags where it
+shows the `loop.index` and the `member.name`.
+For the `href` path, let's type: `href="/about/{{ member.url }}"`.
+We will create that `member.url` value very shortly.
+
+We are going to create a new key and value in our `company.json` file.
+
+The new key will be called: `"url"`, since our href is pointing to `member.url`.
+I will assign the value of "thorin", in all lowercase letters.
+For the next one, again, be sure to add a comma after `"image_source"`, but this time
+it will be: `"url": "kili-and-fili"`.
+
+```json
+[
+    {
+      "name": "Thorin Oakenshield",
+      "description": "Thorin II, also called the Oakenshield, King under the Mountain or the Mountain King, was the son of Thráin II, the older brother of Frerin and Dís, the grandson of King Thrór and the uncle of Fíli and Kíli. Thorin was best known for his deeds as leader of a company that infiltrated the lost Kingdom under the Mountain to take it back from Smaug and for leading an alliance of Men, Dwarves, and Elves in the Battle of the Five Armies.",
+      "image_source": "https://static.wikia.nocookie.net/lotr/images/3/3f/ThorinBIG.jpg",
+      "url": "thorin"
+    }
+]
+```
+Now we need to use some of the advanced routing features in Flask,
+which means we have to go back to our `run.py` file, and create a new route and view.
+We cannot just modify our existing `'/about'` route here, because that's for the page that
+displays all of our members.
+Instead, let's create a new route decorator: `@app.route("/about/<member_name>")`.
+The angle brackets will pass in data from the URL path, into our view below, and I've
+opted to call this parameter: `'member_name'`.
+I will create the view for this, which is going to be: `about_member`.
+That can now take `member_name` from above, as an argument.
+Just to clarify, whenever we look at our `'about'` URL with something after it, that will be
+passed into this view.
+We'll now create an empty object called `'member'`, which we're going to use to store our data
+in later.
+Just as we did in our about view, we are going to open our `company.json` file for read-only
+access, and refer to that as `json_data`.
+We will then create another variable inside, where we pass the data that we've pulled through
+and converted into JSON.
+
+Next, we will iterate through that data array that we've just created.
+I will just give the variable name of `'obj'`, which is just an abbreviation for 'object'.
+`"for obj in data:"`.
+Then we want to check if that object's url key from the file, is equal to the `member_name`
+we've passed through from the URL path.
+`if obj["url"] == member_name:` If they do match, then we want our empty `'member'`
+object from line 24 to be equal to the object in this loop instance.
+Just to demonstrate that, we are going to return some HTML, the same as we did in one
+of our earlier videos.
+For now, I will just `return "<h1>" + member["name"] + "</h1>"`.
+
+
+```python
+@app.route("/about/<member_name>")
+def about_member(member_name):
+    member = {}
+    with open("data/company.json", "r") as json_data:
+        data = json.load(json_data)
+        for obj in data:
+            if obj["url"] == member_name:
+                member = obj
+    return "<h1>" + member["name"] + "</h1>"
+```
+
+
+When we looked at the Jinja built-in filters on a previous video, two of the filters we
+could've used are "`replace()`" and "`lower()`".
+We could have just used the `member.name` in our href links, but added the `lower()` filter
+to make everything lowercase, and the `replace()` filter to convert any spaces to minus symbols
+for example.
+We are not going to use this particular method on this project, but I would like to quickly
+demonstrate what that would look like.
+I'll make a copy of the entire line so we can keep the original for now.
+Instead of `member.url`, I will use `member.name`.
+I will start with the `replace()` filter, and I need to replace any 'space' with the minus
+symbol.
+Kili & Fili have an ampersand, so I will then `replace()` the ampersand with the actual word
+'and'. Óin has a special character in his name,
+so I'll copy that accented Ó, and replace it with a standard 'o'.
+Then finally, let's convert the entire replacement to lowercase by using the `lower()` filter.
+The reason I'm not going to use this method, is because if you try to test it out with
+Thorin's link, you'll get an error.
+This is because his full member.name is Thorin Oakenshield, but we've set `member.url` to just
+'thorin'.
+You would need to modify the Python functionality to look at the `member.name `instead of the
+`member.url`, and also use the replace and lower methods there to get the function setup properly.
+This was purely just to demonstrate some of the built-in Jinja filters that you could
+use.
+
+```html
+        <div class="col-md-7">
+            <!-- Original line -->
+            <h3><a href="/about/{{ member.url }}">{{ loop.index }}. {{ member.name }}</a></h3>
+
+            <!-- Modified example line to use replace() and lower() , witjout a need for "url" key in jason file -->
+            <h3><a href="/about/{{ member.name|replace(' ', '-')|replace('&', 'and')|replace('Ó', 'O')|lower }}">{{ loop.index }}. {{ member.name }}</a></h3>
+
+            <p>{{ member.description }}</p>
+        </div>
+```
+
+That's all quite helpful, but it would be even better if we had a template that was
+displaying this information.
+In my '`templates`' directory, I will create a new file, and call it '`member.html`'.
+We want this page to behave like the other template files, so we need to extend our `base.html`
+template.
+
+```html
+<!-- member.html -->
+{% extends "base.html" %}
+{% block content %}
+    <div class="row">
+        <div class="col-md-5">
+            <img src="{{ member.image_source }}" alt="Profile image for {{ member.name }}">
+            <h2 class="col-md-7">{{member.name}}</h2>
+        </div>
+    </div>
+
+    <div class="col-md-12">
+        <p>{{ member.description }}</p>
+    </div>
+{% endblock %}
+```
+
+Our HTML file is now created to provide basic information about the member when we click
+on them.
+
+We now need to go back into our `run.py` file.
+Instead of returning hard-coded HTML, I will "`return render_template`".
+The first argument is going to be our new `"member.html"` template that we just created.
+The second argument will be "`member=member`".
+This first '`member`' is the variable name being passed through into our html file.
+The second '`member`' is the member object we created above on line 24.
+Okay, so we can save that, and now when I reload the preview, then click on Thorin,
+as we can see, it's extending the `base.html` template, and I have all of the basic information
+about Thorin from our JSON file.
+
+```python
+@app.route("/about/<member_name>")
+def about_member(member_name):
+    member = {}
+    with open("data/company.json", "r") as json_data:
+        data = json.load(json_data)
+        for obj in data:
+            if obj["url"] == member_name:
+                member = obj
+    return render_template("member.html", member=member)
+```
