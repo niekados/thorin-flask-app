@@ -93,7 +93,7 @@ It's also how Heroku can detect what language we're using. That's the reason why
     notice that it takes a bit longer to reload the page.
     This is because the dynos are waking back up, and generating the app again out of hibernation.*
 
-## Deploying from GitHub
+## Deploying from GitHub
 
 *So even though that's working just fine now, sometimes you might want to disconnect
 Heroku and set your app to automatically deploy from GitHub instead.*
@@ -107,6 +107,14 @@ Heroku and set your app to automatically deploy from GitHub instead.*
     - Our application has failed to build, and this is because our app is now reading the code
     from GitHub instead, but we haven't push our code to GitHub yet.
 30. Back in our IDE Terminal. Let's remove Heroku git branch by typing `git remote rm heroku` (`rm` stands for remove and 'heroku' for the remote to be removed). If we type `git remote -v` we will see that only GitHub `origin` remote is left and `heroku` is gone.
-31. Now we can add chnages to GitHub with `git add -A`, `git commit -m "Push to GitHub"` and pushing them with `git push origin master`
+31. Now we can add chnages to GitHub with `git add -A`, `git commit -m "Push to GitHub"` and pushing them with `git push origin main`.
+32. We can go back to Heroku and click "Deploy Branch". Heroku starts building our app and once it's complete we get a message "Your app was successfully deployed."
+
+
+### REMEMEBR 4 MAIN STEPS:
+1. Create Heroku App
+2. Connect Git remote
+3. Add `requirements.txt`
+4. Add `Procfile` file
 
 
