@@ -31,4 +31,20 @@ the Heroku toolbelt.*
 
 ## Linking our Git repository to Heroku
 
-9. In our IDE terminal window 
+9. In our IDE terminal window check if our main branch is up to date `git status`, if there is any untracked files you can add them all with `git add -A` or `git add .` , followed by `git commit -m "Deployment to Heroku"`. 
+    - If we type: `git remote -v`, this will give me verbose output about the remotes that we have.
+10. On Heroku app page click "Settings" tab and in "App information" section and copy "Heroku git URL".
+11. Back in our IDE terminal. To add another remote, we will type: `git remote add`, then a name for our remote,
+which I will call '`heroku`', since '`origin`' is already taken by our instance of GitHub,
+and then finally, just paste the Heroku Git URL.
+    - *Now when we type `git remote -v` it gives me both the Heroku Git URL, as well as the original GitHub URL.*
+    - *If we push now our code directly to Heroku by typing: `git push -u heroku main`. THIS GETS REJECTED!!! as  we get error message `!     No default language could be detected for this app.`*
+
+## Adding requirements.txt file
+
+*A `requirements.txt` file contains a list of the Python dependencies that our project needs in order to run successfully.
+It's also how Heroku can detect what language we're using. That's the reason why our push to Heroku failed in the previous step.*
+
+12. To create a `requirements.txt` file, in terminal type: `pip3 freeze --local > requirements.txt`.
+13. Now add the new file to staging area by typing `git add -A` in terminal.
+14. 
