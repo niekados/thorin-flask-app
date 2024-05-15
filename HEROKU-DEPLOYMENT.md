@@ -47,4 +47,66 @@ It's also how Heroku can detect what language we're using. That's the reason why
 
 12. To create a `requirements.txt` file, in terminal type: `pip3 freeze --local > requirements.txt`.
 13. Now add the new file to staging area by typing `git add -A` in terminal.
-14. 
+14. Then commit changes `git commit -m "Add requirements.txt"`
+15. And finally push it to Heroku `git push -u heroku main`
+
+## Create Procfile
+
+*A Procfile is a Heroku-specific type of file that tells Heroku how to run our project.*
+
+16. To create Procfile `echo web: python run.py > Procfile`
+    - *It's important to note that the Procfile has a capital 'P', not a lowercase 'p', as this is the requirement for Heroku.
+    What this line does, is tells Heroku that it's going to be a web process, and the command
+    to run our application is 'python run.py', which is name of the Python file that we've created.*
+17. Now we can push our Procfile to Heroku `git add Procfile` followed by `git commit -m "Add Procfile"` and `git push`.
+
+- *When I refresh the app, you can see that it's successfully loading now, but we're not finished yet.
+    Remember how we needed to create a `SECRET_KEY` in order to use the `flash()` function for messages?
+    If I were to try and submit the contact form now, it would throw an error.
+    This is because our `SECRET_KEY` is an environment variable within our `env.py` file, and that
+    file is being ignored by Git from our `.gitignore` file, so Heroku cannot see it.*
+    
+- *Before we fix that, I just want to show you one very important page, that you will become
+    quite familiar with during development.
+    If we go back into Heroku, click on "More" in the top right-hand corner, and then click
+    on "View Logs", then we can see the history of our most recent build.
+    This is where you should come to check for any Application Errors.
+    You can also access these logs in your Terminal by typing: `heroku logs --tail --app APP-NAME`,
+    so for me, it would be: "thorin-flask-app".*
+
+## Adding hidden environment variables, or Config Vars
+
+18. Go to Heroku app dashboard and click "Settings" tab.
+19. In "Config Vars" section click "Reveal Config Vars" button.
+20. First add the `KEY` of `IP` and the `VALUE` of `0.0.0.0` and click "Add".
+21. Next add `KEY` of `PORT` and the `VALUE` of `5000` and click "Add". 
+    - *If you recall, these were set at the bottom of our `run.py` file to get the app running.*
+22. Now we need to grab our `SECRET_KEY` variable from our hidden `env.py` file.
+23. Copy `SECRET_KEY` to Heroku config Vars as `KEY` and the `VALUE` will be the second secret key string that we set there.
+    - *Now we can click on "More" and "View Logs" once again.
+    Everything is running just fine, but if we needed to, we could manually restart the build
+    by clicking "More", and then "Restart all dynos".
+    The dyno is the container that's actually running our application.
+    Dynos will only run if the site is being viewed, but will go back to sleep after 30 minutes
+    of inactivity.
+    If you work on your Heroku app, then step away from your computer for some time, you'll
+    notice that it takes a bit longer to reload the page.
+    This is because the dynos are waking back up, and generating the app again out of hibernation.*
+
+## Deploying from GitHub
+
+*So even though that's working just fine now, sometimes you might want to disconnect
+Heroku and set your app to automatically deploy from GitHub instead.*
+
+24. Go back to Heroku and click on the "Deploy" tab.
+25. In "Deployment method" section click "GitHub".
+26. Bellow enter your GitHub repository name and click "Search".
+27. Under the search bar your repository name should appear and we will press "Connect" button.
+28. Next we will select "main" branch and click "Enable Automatic Deploys" button. 
+29. Scroll down to "Manual deploy" section and click "Deploy Branch" button.
+    - Our application has failed to build, and this is because our app is now reading the code
+    from GitHub instead, but we haven't push our code to GitHub yet.
+30. Back in our IDE Terminal. Let's remove Heroku git branch by typing `git remote rm heroku` (`rm` stands for remove and 'heroku' for the remote to be removed). If we type `git remote -v` we will see that only GitHub `origin` remote is left and `heroku` is gone.
+31. Now we can add chnages to GitHub with `git add -A`, `git commit -m "Push to GitHub"` and pushing them with `git push origin master`
+
+
